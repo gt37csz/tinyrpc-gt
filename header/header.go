@@ -30,6 +30,7 @@ type CompressType uint16
 // +--------------+----------------+----------+------------+----------+
 // |    uint16    | uvarint+string |  uvarint |   uvarint  |  uint32  |
 // +--------------+----------------+----------+------------+----------+
+// 这里的uvarint+string指的是，写入方法名的长度+方法名
 type RequestHeader struct {
 	sync.RWMutex
 	CompressType CompressType
@@ -59,7 +60,7 @@ func (r *RequestHeader) Marshal() []byte {
 	return header[:idx]
 }
 
-// Unmarshal will decode request header into a byte slice
+// Unmarshal will decode a byte slice into request header
 func (r *RequestHeader) Unmarshal(data []byte) (err error) {
 	r.Lock()
 	defer r.Unlock()
@@ -192,6 +193,8 @@ func (r *ResponseHeader) ResetHeader() {
 	r.ResponseLen = 0
 }
 
+// 默认data开头就是字符串长度
+// readString 从byte slice中依次读出字符串的长度和该字符串
 func readString(data []byte) (string, int) {
 	idx := 0
 	length, size := binary.Uvarint(data)
@@ -201,6 +204,7 @@ func readString(data []byte) (string, int) {
 	return str, idx
 }
 
+// writeString 将方法名的长度和方法名写入byte slice
 func writeString(data []byte, str string) int {
 	idx := 0
 	idx += binary.PutUvarint(data, uint64(len(str)))

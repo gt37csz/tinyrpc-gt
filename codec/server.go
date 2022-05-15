@@ -16,6 +16,7 @@ import (
 	"github.com/zehuamama/tinyrpc/serializer"
 )
 
+// serverCodec 服务端编解码器
 type serverCodec struct {
 	r io.Reader
 	w io.Writer
@@ -25,7 +26,7 @@ type serverCodec struct {
 	serializer serializer.Serializer
 	mutex      sync.Mutex // protects seq, pending
 	seq        uint64
-	pending    map[uint64]uint64
+	pending    map[uint64]uint64 // 保存正在处理的远程call吗？
 }
 
 // NewServerCodec Create a new server codec
