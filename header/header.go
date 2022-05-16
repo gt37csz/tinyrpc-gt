@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+// 自定义请求头与响应头的数据结构，并根据该结构对header执行编解码
+// 为什么需要对header的读操作要加读锁，对header的写操作要加写锁？？？
+
 package header
 
 import (

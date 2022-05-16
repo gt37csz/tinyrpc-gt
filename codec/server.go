@@ -16,7 +16,9 @@ import (
 	"github.com/zehuamama/tinyrpc/serializer"
 )
 
-// serverCodec 服务端编解码器
+// serverCodec 服务端编解码器，实现了rpc.ServerCodec接口，主要实现三个函数
+// 读请求头、读请求体、写入响应头和响应体
+
 type serverCodec struct {
 	r io.Reader
 	w io.Writer
@@ -40,6 +42,7 @@ func NewServerCodec(conn io.ReadWriteCloser, serializer serializer.Serializer) r
 	}
 }
 
+// 对serverCodec加锁，序列号+1，将还未完成调用的请求记录到pending中
 // ReadRequestHeader read the rpc request header from the io stream
 func (s *serverCodec) ReadRequestHeader(r *rpc.Request) error {
 	s.request.ResetHeader()

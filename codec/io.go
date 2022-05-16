@@ -10,6 +10,7 @@ import (
 	"net"
 )
 
+// sendFrame 向conn中写入response header
 func sendFrame(w io.Writer, data []byte) (err error) {
 	var size [binary.MaxVarintLen64]byte
 
@@ -31,6 +32,8 @@ func sendFrame(w io.Writer, data []byte) (err error) {
 	return
 }
 
+// recvFrame 将conn传过来的request header读到byte slice中，如果conn中没有数据可读
+// 就会返回一个EOF的error，如果有数据但读取失败也会返回error，该error会一直往上传导
 func recvFrame(r io.Reader) (data []byte, err error) {
 	size, err := binary.ReadUvarint(r.(io.ByteReader))
 	if err != nil {
@@ -45,6 +48,7 @@ func recvFrame(r io.Reader) (data []byte, err error) {
 	return data, nil
 }
 
+// write 向conn中写入response body，由于data可能比较大，w的缓冲区默认是4096，因此要在for循环中分批读取
 func write(w io.Writer, data []byte) error {
 	for index := 0; index < len(data); {
 		n, err := w.Write(data[index:])
@@ -56,6 +60,7 @@ func write(w io.Writer, data []byte) error {
 	return nil
 }
 
+// read 从conn中读取request body
 func read(r io.Reader, data []byte) error {
 	for index := 0; index < len(data); {
 		n, err := r.Read(data[index:])

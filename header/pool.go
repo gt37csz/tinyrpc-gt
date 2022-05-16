@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+// 使用syn.Pool构造了一个请求池和响应池，这是上面加锁的原因吗？？？
 package header
 
 import "sync"

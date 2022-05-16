@@ -15,7 +15,11 @@ import (
 	"github.com/zehuamama/tinyrpc/header"
 	"github.com/zehuamama/tinyrpc/serializer"
 )
-
+// 相比于serverCodec
+// clientCodec多了compressor.CompressType字段，说明压缩方式仅仅取决于客户端的选择
+// seq序列号只存在于serverCodec
+// clientCodec也会有pending用来保存还未返回消息的call，但是k是序列号，v是(服务+方法)名
+// clientCodec 客户端编解码器，实现了rpc.ClientCodec接口
 type clientCodec struct {
 	r io.Reader
 	w io.Writer
